@@ -67,7 +67,14 @@ class KhatibController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('admin.khatib.index')->with('success', 'Data Khatib berhasil ditambahkan. Username login: ' . $username);
+        return redirect()->route('admin.khatib.index')->with([
+            'success' => 'Data Khatib berhasil ditambahkan. Username login: ' . $username,
+            'new_khatib' => [
+                'nama' => $request->nama,
+                'username' => $username,
+                'no_hp' => $request->no_hp,
+            ]
+        ]);
     }
 
     public function edit(Khatib $khatib)

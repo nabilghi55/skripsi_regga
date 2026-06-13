@@ -4,6 +4,52 @@
 @section('page_header', 'Data Khatib')
 
 @section('content')
+@if(session('new_khatib'))
+    @php
+        $newKhatib = session('new_khatib');
+        $cleanPhone = preg_replace('/[^0-9]/', '', $newKhatib['no_hp']);
+        if (strpos($cleanPhone, '0') === 0) {
+            $cleanPhone = '62' . substr($cleanPhone, 1);
+        }
+        
+        $waMessage = "Assalamu'alaikum Wr. Wb.\n\n"
+                   . "Yth. " . $newKhatib['nama'] . ",\n"
+                   . "Berikut adalah informasi akun Anda untuk mengakses website SIKJ CMM:\n\n"
+                   . "🔗 Link Login: " . route('login') . "\n"
+                   . "👤 Username: *" . $newKhatib['username'] . "*\n"
+                   . "🔑 Password: *password123*\n\n"
+                   . "Mohon untuk segera login dan memperbarui password Anda demi keamanan akun.\n\n"
+                   . "Terima kasih.\n"
+                   . "Wassalamu'alaikum Wr. Wb.";
+        $waUrl = "https://wa.me/" . $cleanPhone . "?text=" . rawurlencode($waMessage);
+    @endphp
+    <div class="content-card" style="border-left: 5px solid #25D366; background-color: rgba(37, 211, 102, 0.05); margin-bottom: 20px; padding: 20px;">
+        <div style="display: flex; align-items: flex-start; gap: 15px;">
+            <div style="background-color: #25D366; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; font-weight: bold;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                </svg>
+            </div>
+            <div style="flex-grow: 1;">
+                <h4 style="margin: 0 0 5px 0; color: #1E293B; font-weight: 800; font-size: 16px;">Kirim Akses Login Ustad Baru</h4>
+                <p style="margin: 0 0 15px 0; color: #64748B; font-size: 13px;">
+                    Data Ustad <strong>{{ $newKhatib['nama'] }}</strong> berhasil ditambahkan. Anda dapat langsung mengirimkan kredensial akun login ke nomor WhatsApp Ustad bersangkutan.
+                </p>
+                <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 15px; font-size: 13px; max-width: 300px;">
+                    <div style="margin-bottom: 5px;"><strong>Username:</strong> <code>{{ $newKhatib['username'] }}</code></div>
+                    <div><strong>Password:</strong> <code>password123</code></div>
+                </div>
+                <a href="{{ $waUrl }}" target="_blank" class="btn btn-whatsapp" style="display: inline-flex; width: auto; font-size: 13px; padding: 10px 18px; gap: 8px; border-radius: var(--radius-sm); text-decoration: none;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    </svg>
+                    Kirim Akses via WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+@endif
+
 <div class="content-card">
     <div class="card-header-actions">
         <!-- Search bar -->
@@ -44,6 +90,28 @@
                         </td>
                         <td>
                             <div class="action-buttons" style="justify-content: center;">
+                                @php
+                                    $cleanPhone = preg_replace('/[^0-9]/', '', $k->no_hp);
+                                    if (strpos($cleanPhone, '0') === 0) {
+                                        $cleanPhone = '62' . substr($cleanPhone, 1);
+                                    }
+                                    
+                                    $waMessage = "Assalamu'alaikum Wr. Wb.\n\n"
+                                               . "Yth. " . $k->nama . ",\n"
+                                               . "Berikut adalah informasi akun Anda untuk mengakses website SIKJ CMM:\n\n"
+                                               . "🔗 Link Login: " . route('login') . "\n"
+                                               . "👤 Username: *" . ($k->user->username ?? '') . "*\n"
+                                               . "🔑 Password: *password123*\n\n"
+                                               . "Mohon untuk segera login dan memperbarui password Anda demi keamanan akun.\n\n"
+                                               . "Terima kasih.\n"
+                                               . "Wassalamu'alaikum Wr. Wb.";
+                                    $waUrl = "https://wa.me/" . $cleanPhone . "?text=" . rawurlencode($waMessage);
+                                @endphp
+                                <a href="{{ $waUrl }}" target="_blank" class="btn-action" title="Kirim Akses WA" style="color: #25D366;" onmouseover="this.style.color='#128C7E'; this.style.backgroundColor='rgba(37, 211, 102, 0.1)';" onmouseout="this.style.color='#25D366'; this.style.backgroundColor='';">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                                    </svg>
+                                </a>
                                 <a href="{{ route('admin.khatib.edit', $k->id) }}" class="btn-action" title="Edit">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                 </a>
