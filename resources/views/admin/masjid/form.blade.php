@@ -1,0 +1,64 @@
+@extends('admin.layouts.admin')
+
+@section('title', ($isEdit ? 'Edit' : 'Tambah') . ' Data Masjid')
+@section('page_header', ($isEdit ? 'Edit' : 'Tambah') . ' Data Masjid')
+
+@section('content')
+<div class="content-card form-card">
+    <!-- Back Button Link -->
+    <a href="{{ route('admin.masjid.index') }}" class="form-header-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span>Kembali ke Data Masjid</span>
+    </a>
+
+    <!-- Form -->
+    <form action="{{ $isEdit ? route('admin.masjid.update', $masjid->id) : route('admin.masjid.store') }}" method="POST">
+        @csrf
+        @if($isEdit)
+            @method('PUT')
+        @endif
+
+        <div class="form-group">
+            <label class="form-label" for="nama">Nama Masjid</label>
+            <input type="text" name="nama" id="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama', $masjid->nama) }}" placeholder="Masukkan nama masjid" required>
+            @error('nama')
+                <span class="error-text">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="alamat">Alamat</label>
+            <textarea name="alamat" id="alamat" rows="4" class="form-control @error('alamat') is-invalid @enderror" placeholder="Masukkan alamat lengkap masjid" required>{{ old('alamat', $masjid->alamat) }}</textarea>
+            @error('alamat')
+                <span class="error-text">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="kecamatan">Kecamatan</label>
+            <select name="kecamatan" id="kecamatan" class="form-control @error('kecamatan') is-invalid @enderror" required>
+                <option value="">Pilih Kecamatan</option>
+                @foreach($kecamatans as $kec)
+                    <option value="{{ $kec }}" {{ old('kecamatan', $masjid->kecamatan) === $kec ? 'selected' : '' }}>{{ $kec }}</option>
+                @endforeach
+            </select>
+            @error('kecamatan')
+                <span class="error-text">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="google_maps_link">Link Google Maps</label>
+            <input type="url" name="google_maps_link" id="google_maps_link" class="form-control @error('google_maps_link') is-invalid @enderror" value="{{ old('google_maps_link', $masjid->google_maps_link) }}" placeholder="Masukkan link google maps">
+            @error('google_maps_link')
+                <span class="error-text">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-actions-row">
+            <button type="submit" class="btn btn-primary" style="flex: 1;">SIMPAN</button>
+            <a href="{{ route('admin.masjid.index') }}" class="btn btn-secondary" style="flex: 1;">BATAL</a>
+        </div>
+    </form>
+</div>
+@endsection
