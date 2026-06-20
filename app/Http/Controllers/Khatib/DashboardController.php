@@ -105,4 +105,58 @@ class DashboardController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function profile()
+    {
+        $khatib = $this->getKhatib();
+        return view('khatib.profile', compact('khatib'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $khatib = $this->getKhatib();
+        
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'no_hp' => 'required|string|max:20',
+            'no_hp_2' => 'nullable|string|max:20',
+            'alamat' => 'required|string',
+            'foto_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $data = $request->only(['nama', 'no_hp', 'no_hp_2', 'alamat']);
+
+        if ($request->hasFile('foto_profile')) {
+            $data['foto_profile'] = $request->file('foto_profile')->store('profile_photos', 'public');
+        }
+
+        $khatib->update($data);
+
+        // Update User name
+        Auth::user()->update([
+            'name' => $request->nama
+        ]);
+
+        return redirect()->back()->with('success', 'Profil Anda berhasil diperbarui.');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if (!\Illuminate\Support\Facades\Hash::check($request->current_password, $user->password)) {
+            return redirect()->back()->withErrors(['current_password' => 'Password saat ini salah.']);
+        }
+
+        $user->update([
+            'password' => bcrypt($request->new_password)
+        ]);
+
+        return redirect()->back()->with('success', 'Password Anda berhasil diubah.');
+    }
 }

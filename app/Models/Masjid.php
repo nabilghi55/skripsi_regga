@@ -10,14 +10,23 @@ class Masjid extends Model
     use HasFactory;
 
     protected $fillable = [
+        'kode_masjid',
         'nama',
         'alamat',
         'kecamatan',
+        'no_hp_1',
+        'no_hp_2',
         'google_maps_link',
+        'kategori',
     ];
 
     public function jadwals()
     {
         return $this->hasMany(Jadwal::class);
+    }
+
+    public function riwayatBadals()
+    {
+        return $this->hasMany(RiwayatBadal::class);
     }
 }

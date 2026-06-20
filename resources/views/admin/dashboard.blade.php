@@ -4,6 +4,12 @@
 @section('page_header', 'Dashboard')
 
 @section('content')
+<!-- Last Updated Timestamp -->
+<div style="background-color: var(--primary-light); color: var(--primary); padding: 12px 20px; border-radius: var(--radius-md); font-weight: 700; font-size: 13px; margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span>Update Terakhir Data SIKJ: {{ $tanggalUpdate }}</span>
+</div>
+
 <!-- Statistics Grid -->
 <div class="stats-grid">
     <div class="stat-card">
@@ -49,39 +55,81 @@
 
 <!-- Schedules Table -->
 <div class="content-card">
-    <div class="card-header-actions" style="margin-bottom: 25px;">
-        <h2 style="font-size: 18px; font-weight: 800; color: var(--text-dark);">Jadwal Terdekat</h2>
-        <a href="{{ route('admin.jadwal.index') }}" class="btn btn-secondary" style="width: auto; padding: 8px 16px; font-size: 13px;">Lihat Semua</a>
+    <div class="card-header-actions" style="margin-bottom: 15px;">
+        <h2 style="font-size: 18px; font-weight: 800; color: var(--text-dark);">Jadwal Terdekat (Unik Per Masjid)</h2>
     </div>
 
+    <!-- Filters Form -->
+    <form method="GET" action="{{ route('admin.dashboard') }}" style="display: flex; gap: 12px; margin-bottom: 25px; align-items: center; flex-wrap: wrap;">
+        <div style="flex-grow: 1; min-width: 200px; position: relative;">
+            <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama masjid atau khatib..." class="form-control" style="padding-left: 40px; font-size: 13px;">
+            <svg style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <div style="width: 180px;">
+            <select name="periode" class="form-control" onchange="this.form.submit()" style="font-size: 13px;">
+                <option value="">Pilih Periode Waktu</option>
+                <option value="1_minggu" {{ $periode === '1_minggu' ? 'selected' : '' }}>1 Minggu Terdekat</option>
+                <option value="1_bulan" {{ $periode === '1_bulan' ? 'selected' : '' }}>1 Bulan Terdekat</option>
+                <option value="4_bulan" {{ $periode === '4_bulan' ? 'selected' : '' }}>4 Bulan Terdekat</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: auto; padding: 10px 18px; font-size: 13px;">Filter</button>
+        @if($search || $periode)
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary" style="width: auto; padding: 10px 18px; font-size: 13px;">Reset</a>
+        @endif
+    </form>
+
+    <!-- Table content -->
     <div class="table-wrapper">
         <table class="custom-table">
             <thead>
                 <tr>
                     <th>Tanggal</th>
+                    <th>Jumat Ke / Waktu</th>
                     <th>Masjid</th>
                     <th>Khatib</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($jadwalTerdekat as $jadwal)
                     <tr>
-                        <td style="font-weight: 600; color: var(--primary);">{{ $jadwal->tanggal->translatedFormat('d F Y') }}</td>
+                        <td style="font-weight: 600; color: var(--primary);">
+                            <div>{{ $jadwal->tanggal->translatedFormat('d F Y') }}</div>
+                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 500;">{{ $jadwal->hijri_date }}</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 600;">Jumat ke-{{ $jadwal->jumat_ke ?? '-' }}</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">{{ \Carbon\Carbon::parse($jadwal->waktu_khutbah)->format('H:i') }} WIB</div>
+                        </td>
                         <td>
                             <div style="font-weight: 700;">{{ $jadwal->masjid->nama }}</div>
                             <div style="font-size: 12px; color: var(--text-muted);">{{ $jadwal->masjid->kecamatan }}</div>
                         </td>
                         <td style="font-weight: 600;">{{ $jadwal->khatib->nama }}</td>
+                        <td>
+                            <span class="badge {{ $jadwal->status === 'Aktif' || $jadwal->status === 'Hadir' ? 'badge-active' : ($jadwal->status === 'Perubahan Diajukan' ? 'badge-warning' : 'badge-inactive') }}">
+                                {{ $jadwal->status }}
+                            </span>
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="3" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">
                             Tidak ada jadwal terdekat saat ini.
                         </td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
+    </div>
+
+    <!-- Lihat Selengkapnya Link at the Bottom -->
+    <div style="margin-top: 20px; text-align: center; border-top: 1px solid var(--border-color); padding-top: 20px;">
+        <a href="{{ route('admin.jadwal.index') }}" class="btn btn-secondary" style="width: auto; display: inline-flex; gap: 8px; font-size: 13px; padding: 10px 24px;">
+            <span>Lihat Selengkapnya</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
     </div>
 </div>
 @endsection

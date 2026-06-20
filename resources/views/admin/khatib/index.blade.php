@@ -51,18 +51,32 @@
 @endif
 
 <div class="content-card">
-    <div class="card-header-actions">
+    <div class="card-header-actions" style="margin-bottom: 25px;">
         <!-- Search bar -->
         <form action="{{ route('admin.khatib.index') }}" method="GET" class="search-box">
-            <input type="text" name="search" value="{{ $search }}" placeholder="Cari data khatib..." class="search-input">
+            <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama atau NBM..." class="search-input">
             <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </form>
 
-        <!-- Tambah button -->
-        <a href="{{ route('admin.khatib.create') }}" class="btn btn-primary btn-add">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Tambah Data
-        </a>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <!-- Export Excel Button -->
+            <a href="{{ route('admin.khatib.export', ['search' => $search]) }}" class="btn btn-secondary" style="width: auto; padding: 10px 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Export Excel</span>
+            </a>
+
+            <!-- Download PDF Button -->
+            <a href="{{ route('admin.khatib.cetak', ['search' => $search]) }}" target="_blank" class="btn btn-secondary" style="width: auto; padding: 10px 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                <span>Cetak PDF</span>
+            </a>
+
+            <!-- Tambah button -->
+            <a href="{{ route('admin.khatib.create') }}" class="btn btn-primary btn-add">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Tambah Data
+            </a>
+        </div>
     </div>
 
     <!-- Table -->
@@ -70,21 +84,42 @@
         <table class="custom-table">
             <thead>
                 <tr>
-                    <th style="width: 60px;">No</th>
-                    <th>Nama</th>
-                    <th>No HP</th>
+                    <th style="width: 50px;">No</th>
+                    <th>NBM</th>
+                    <th>Nama Khatib</th>
+                    <th>Alamat (Privasi)</th>
+                    <th>No HP 1 (Privasi)</th>
+                    <th>No HP 2 (Privasi)</th>
+                    <th>Tgl Lahir</th>
                     <th>Status</th>
-                    <th style="width: 120px; text-align: center;">Aksi</th>
+                    <th style="width: 150px; text-align: center;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($khatibs as $index => $k)
+                    @php
+                        // Privacy masking logic
+                        $maskedAlamat = strlen($k->alamat) > 10 ? substr($k->alamat, 0, 8) . '***' : $k->alamat;
+                        $maskedNoHp1 = strlen($k->no_hp) > 6 ? substr($k->no_hp, 0, 4) . '****' . substr($k->no_hp, -3) : $k->no_hp;
+                        $maskedNoHp2 = $k->no_hp_2 
+                            ? (strlen($k->no_hp_2) > 6 ? substr($k->no_hp_2, 0, 4) . '****' . substr($k->no_hp_2, -3) : $k->no_hp_2)
+                            : '-';
+                    @endphp
                     <tr>
                         <td>{{ $khatibs->firstItem() + $index }}</td>
-                        <td style="font-weight: 700;">{{ $k->nama }}</td>
-                        <td>{{ $k->no_hp }}</td>
+                        <td><code style="font-weight: bold; color: var(--text-dark);">{{ $k->nbm ?? '-' }}</code></td>
+                        <td style="font-weight: 700;">
+                            <!-- Link to Khatib detail page -->
+                            <a href="{{ route('admin.khatib.show', $k->id) }}" style="color: var(--primary); text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                                {{ $k->nama }}
+                            </a>
+                        </td>
+                        <td><span title="{{ $k->alamat }}">{{ $maskedAlamat }}</span></td>
+                        <td><span>{{ $maskedNoHp1 }}</span></td>
+                        <td><span>{{ $maskedNoHp2 }}</span></td>
+                        <td>{{ $k->tanggal_lahir ? $k->tanggal_lahir->translatedFormat('d M Y') : '-' }}</td>
                         <td>
-                            <span class="badge {{ $k->status === 'Aktif' ? 'badge-active' : 'badge-inactive' }}">
+                            <span class="badge {{ $k->status === 'Normal' ? 'badge-active' : ($k->status === 'Off' ? 'badge-inactive' : 'badge-warning') }}">
                                 {{ $k->status }}
                             </span>
                         </td>
@@ -107,10 +142,13 @@
                                                . "Wassalamu'alaikum Wr. Wb.";
                                     $waUrl = "https://wa.me/" . $cleanPhone . "?text=" . rawurlencode($waMessage);
                                 @endphp
-                                <a href="{{ $waUrl }}" target="_blank" class="btn-action" title="Kirim Akses WA" style="color: #25D366;" onmouseover="this.style.color='#128C7E'; this.style.backgroundColor='rgba(37, 211, 102, 0.1)';" onmouseout="this.style.color='#25D366'; this.style.backgroundColor='';">
+                                <a href="{{ $waUrl }}" target="_blank" class="btn-action" title="Kirim Kredensial WA" style="color: #25D366;" onmouseover="this.style.color='#128C7E'; this.style.backgroundColor='rgba(37, 211, 102, 0.1)';" onmouseout="this.style.color='#25D366'; this.style.backgroundColor='';">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
                                     </svg>
+                                </a>
+                                <a href="{{ route('admin.khatib.show', $k->id) }}" class="btn-action" title="Detail Riwayat & Kehadiran" style="color: var(--primary);">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                 </a>
                                 <a href="{{ route('admin.khatib.edit', $k->id) }}" class="btn-action" title="Edit">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -127,7 +165,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                        <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 30px;">
                             Tidak ada data khatib ditemukan.
                         </td>
                     </tr>
