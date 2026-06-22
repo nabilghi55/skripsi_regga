@@ -67,6 +67,7 @@
                     <th>NAMA KHOTIB</th>
                     <th style="width: 130px; text-align: center;">STATUS</th>
                     <th>KETERANGAN</th>
+                    <th style="width: 140px; text-align: center;">AKSI</th>
                 </tr>
             </thead>
             <tbody>
@@ -101,11 +102,22 @@
                         </td>
                         <td style="font-size: 13px; color: var(--text-muted);">
                             {{ $j->keterangan ?? '-' }}
+                            @if($j->catatan_saran_takmir)
+                                <div style="font-size: 12px; margin-top: 6px; color: var(--primary); font-weight: 600; background-color: var(--primary-light); padding: 6px 10px; border-radius: var(--radius-sm); border-left: 3px solid var(--primary);">
+                                    <strong>Saran Takmir:</strong> "{{ $j->catatan_saran_takmir }}"
+                                </div>
+                            @endif
+                        </td>
+                        <td style="text-align: center;">
+                            <button onclick="openSaranModal('{{ route('takmir.jadwal.saran', $j->id) }}', '{{ $j->tanggal->translatedFormat('d F Y') }}', '{{ addslashes($j->catatan_saran_takmir) }}')" class="btn btn-primary btn-detail-sm" style="padding: 6px 10px; font-size: 11px; font-weight: bold; width: auto; height: auto; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                SARAN
+                            </button>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px 10px;">
+                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px 10px;">
                             Tidak ada jadwal khotbah yang ditemukan.
                         </td>
                     </tr>
@@ -121,4 +133,42 @@
         </div>
     @endif
 </div>
+
+<!-- Modal for suggestions -->
+<div class="modal-overlay" id="saran-modal" style="display: none;">
+    <div class="modal-card" style="max-width: 400px; padding: 24px; text-align: left;">
+        <button class="modal-close" id="saran-close-btn">&times;</button>
+        <h3 class="modal-title" style="font-size: 16px; font-weight: 800; margin-bottom: 15px; text-transform: uppercase;">MASUKKAN CATATAN / SARAN</h3>
+        <form id="saran-form" method="POST" action="">
+            @csrf
+            <div class="form-group" style="margin-bottom: 16px;">
+                <label class="form-label" style="margin-bottom: 8px;">Jadwal Hari: <span id="saran-date-label" style="font-weight: bold; color: var(--primary);"></span></label>
+                <textarea name="catatan_saran_takmir" id="modal_saran_input" rows="4" class="form-control" placeholder="Tulis catatan pelaksanaan sholat jumat atau saran untuk Khatib/Admin di sini..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">SIMPAN</button>
+        </form>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+function openSaranModal(actionUrl, currentDate, currentSaran) {
+    document.getElementById('saran-form').action = actionUrl;
+    document.getElementById('saran-date-label').innerText = currentDate;
+    document.getElementById('modal_saran_input').value = currentSaran || '';
+    document.getElementById('saran-modal').style.display = 'flex';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('saran-modal');
+    const closeBtn = document.getElementById('saran-close-btn');
+
+    if (closeBtn && modal) {
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+    }
+});
+</script>
 @endsection

@@ -94,6 +94,7 @@ Route::middleware(['auth', 'role:khatib'])->prefix('khatib')->group(function () 
 Route::middleware(['auth', 'role:takmir'])->prefix('takmir')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Takmir\DashboardController::class, 'index'])->name('takmir.dashboard');
     Route::get('/jadwal', [\App\Http\Controllers\Takmir\DashboardController::class, 'jadwalMasjid'])->name('takmir.jadwal');
+    Route::post('/jadwal/{jadwal}/saran', [\App\Http\Controllers\Takmir\DashboardController::class, 'updateSaran'])->name('takmir.jadwal.saran');
     Route::get('/jadwal/cetak', [\App\Http\Controllers\Takmir\DashboardController::class, 'cetakJadwal'])->name('takmir.jadwal.cetak');
     Route::get('/profile', [\App\Http\Controllers\Takmir\DashboardController::class, 'profile'])->name('takmir.profile');
     Route::post('/profile', [\App\Http\Controllers\Takmir\DashboardController::class, 'updateProfile'])->name('takmir.profile.update');

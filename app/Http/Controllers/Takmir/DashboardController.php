@@ -163,4 +163,22 @@ class DashboardController extends Controller
 
         return redirect()->back()->with('success', 'Password Anda berhasil diubah.');
     }
+
+    public function updateSaran(Request $request, Jadwal $jadwal)
+    {
+        $masjid = $this->getMasjid();
+        if (!$masjid || $jadwal->masjid_id !== $masjid->id) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $request->validate([
+            'catatan_saran_takmir' => 'nullable|string|max:1000',
+        ]);
+
+        $jadwal->update([
+            'catatan_saran_takmir' => $request->catatan_saran_takmir,
+        ]);
+
+        return redirect()->back()->with('success', 'Catatan/saran berhasil disimpan.');
+    }
 }
