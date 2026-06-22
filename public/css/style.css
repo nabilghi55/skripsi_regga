@@ -1286,3 +1286,98 @@ body {
     font-size: 40px;
     color: var(--text-muted);
 }
+
+/* SIKJ Takmir Panel Responsive Header & Layout Styles */
+.takmir-navbar {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.takmir-navbar-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.takmir-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.takmir-brand-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.takmir-nav-links {
+    display: flex;
+    gap: 16px;
+}
+
+.takmir-nav-link {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+}
+
+.takmir-nav-link:hover, .takmir-nav-link.active {
+    color: var(--primary);
+    background-color: var(--primary-light);
+}
+
+.takmir-user-menu {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.takmir-user-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.takmir-main-content {
+    padding: 40px 0;
+    min-height: calc(100vh - 70px);
+    display: flex;
+    flex-direction: column;
+}
+
+.takmir-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+    flex-grow: 1;
+}
+
+@media (max-width: 768px) {
+    .takmir-nav-links {
+        display: none;
+    }
+    .takmir-user-menu {
+        display: none;
+    }
+    .takmir-main-content {
+        padding: 20px 0 100px; /* Space for bottom nav */
+    }
+}

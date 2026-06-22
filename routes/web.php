@@ -90,12 +90,27 @@ Route::middleware(['auth', 'role:khatib'])->prefix('khatib')->group(function () 
     Route::post('/profile/password', [KhatibDashboardController::class, 'changePassword'])->name('khatib.profile.password');
 });
 
+// Takmir Routes
+Route::middleware(['auth', 'role:takmir'])->prefix('takmir')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Takmir\DashboardController::class, 'index'])->name('takmir.dashboard');
+    Route::get('/jadwal', [\App\Http\Controllers\Takmir\DashboardController::class, 'jadwalMasjid'])->name('takmir.jadwal');
+    Route::get('/jadwal/cetak', [\App\Http\Controllers\Takmir\DashboardController::class, 'cetakJadwal'])->name('takmir.jadwal.cetak');
+    Route::get('/profile', [\App\Http\Controllers\Takmir\DashboardController::class, 'profile'])->name('takmir.profile');
+    Route::post('/profile', [\App\Http\Controllers\Takmir\DashboardController::class, 'updateProfile'])->name('takmir.profile.update');
+    Route::post('/profile/password', [\App\Http\Controllers\Takmir\DashboardController::class, 'changePassword'])->name('takmir.profile.password');
+});
+
 // Home fallback
 Route::get('/home', function () {
     if (auth()->check()) {
-        return auth()->user()->role === 'pengurus' 
-            ? redirect()->route('admin.dashboard') 
-            : redirect()->route('khatib.dashboard');
+        $role = auth()->user()->role;
+        if ($role === 'pengurus') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($role === 'khatib') {
+            return redirect()->route('khatib.dashboard');
+        } elseif ($role === 'takmir') {
+            return redirect()->route('takmir.dashboard');
+        }
     }
     return redirect()->route('login');
 });

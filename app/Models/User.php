@@ -22,6 +22,11 @@ class User extends Authenticatable
         return $this->hasOne(Khatib::class);
     }
 
+    public function masjid()
+    {
+        return $this->hasOne(Masjid::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

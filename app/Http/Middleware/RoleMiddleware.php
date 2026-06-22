@@ -27,6 +27,8 @@ class RoleMiddleware
                 return redirect()->route('admin.dashboard');
             } elseif ($user->role === 'khatib') {
                 return redirect()->route('khatib.dashboard');
+            } elseif ($user->role === 'takmir') {
+                return redirect()->route('takmir.dashboard');
             }
             abort(403, 'Unauthorized action.');
         }

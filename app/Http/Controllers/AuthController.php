@@ -14,6 +14,8 @@ class AuthController extends Controller
                 return redirect()->route('admin.dashboard');
             } elseif (Auth::user()->role === 'khatib') {
                 return redirect()->route('khatib.dashboard');
+            } elseif (Auth::user()->role === 'takmir') {
+                return redirect()->route('takmir.dashboard');
             }
         }
         return view('auth.login');
@@ -34,6 +36,9 @@ class AuthController extends Controller
                 return redirect()->route('admin.dashboard');
             } elseif ($user->role === 'khatib') {
                 return redirect()->route('khatib.dashboard');
+            } elseif ($user->role === 'takmir') {
+                session()->flash('show_reminder', true);
+                return redirect()->route('takmir.dashboard');
             }
         }
 

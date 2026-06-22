@@ -18,6 +18,8 @@ class Masjid extends Model
         'no_hp_2',
         'google_maps_link',
         'kategori',
+        'user_id',
+        'foto_profile',
     ];
 
     public function jadwals()
@@ -28,5 +30,10 @@ class Masjid extends Model
     public function riwayatBadals()
     {
         return $this->hasMany(RiwayatBadal::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
