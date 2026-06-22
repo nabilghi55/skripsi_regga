@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Khatib;
 use App\Models\User;
+use App\Models\Jadwal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
