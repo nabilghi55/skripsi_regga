@@ -58,6 +58,7 @@
                     <th>No HP 1 (Privasi)</th>
                     <th>No HP 2 (Privasi)</th>
                     <th>Kecamatan</th>
+                    <th>Akun Takmir</th>
                     <th>Kategori</th>
                     <th style="width: 120px; text-align: center;">Aksi</th>
                 </tr>
@@ -77,11 +78,26 @@
                     <tr>
                         <td>{{ $masjids->firstItem() + $index }}</td>
                         <td><code style="font-weight: bold; color: var(--text-dark);">{{ $m->kode_masjid ?? '-' }}</code></td>
-                        <td style="font-weight: 700;">{{ $m->nama }}</td>
+                        <td style="font-weight: 700;">
+                            <a href="{{ route('admin.masjid.edit', $m->id) }}" style="color: var(--primary); text-decoration: none; font-weight: 700;">
+                                {{ $m->nama }}
+                            </a>
+                        </td>
                         <td><span title="{{ $m->alamat }}">{{ $maskedAlamat }}</span></td>
                         <td>{{ $maskedNoHp1 }}</td>
                         <td>{{ $maskedNoHp2 }}</td>
                         <td>{{ $m->kecamatan }}</td>
+                        <td>
+                            @if($m->user)
+                                <span class="badge badge-active" title="Username: {{ $m->user->username }}">
+                                    {{ $m->user->name }}
+                                </span>
+                            @else
+                                <span class="badge badge-inactive">
+                                    Belum Ada Akun
+                                </span>
+                            @endif
+                        </td>
                         <td>
                             <span class="badge {{ $m->kategori === 'Masjid Muhammadiyah' ? 'badge-active' : 'badge-warning' }}">
                                 {{ $m->kategori }}
@@ -104,7 +120,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                        <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 30px;">
                             Tidak ada data masjid ditemukan.
                         </td>
                     </tr>

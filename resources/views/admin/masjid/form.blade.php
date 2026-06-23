@@ -98,4 +98,103 @@
         </div>
     </form>
 </div>
+
+@if($isEdit)
+<div class="content-card form-card" style="margin-top: 30px;">
+    <h3 style="margin-bottom: 20px; font-weight: 800; color: var(--text-dark); display: flex; align-items: center; gap: 8px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <span>Akun Takmir Masjid</span>
+    </h3>
+
+    @if($masjid->user)
+        <!-- If Takmir account exists, show edit form -->
+        <form action="{{ route('admin.masjid.takmir.store', $masjid->id) }}" method="POST">
+            @csrf
+            <div class="form-group">
+                <label class="form-label" for="takmir_name">Nama Lengkap Takmir</label>
+                <input type="text" name="name" id="takmir_name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $masjid->user->name) }}" required>
+                @error('name')
+                    <span class="error-text">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <label class="form-label" for="takmir_username">Username</label>
+                    <input type="text" name="username" id="takmir_username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username', $masjid->user->username) }}" required>
+                    @error('username')
+                        <span class="error-text">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div>
+                    <label class="form-label" for="takmir_email">Email</label>
+                    <input type="email" name="email" id="takmir_email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $masjid->user->email) }}" required>
+                    @error('email')
+                        <span class="error-text">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="takmir_password">Password Baru <span style="font-weight: normal; font-size: 12px; color: var(--text-muted);">(Kosongkan jika tidak ingin mengubah password)</span></label>
+                <input type="password" name="password" id="takmir_password" class="form-control @error('password') is-invalid @enderror" placeholder="Masukkan password baru minimal 8 karakter">
+                @error('password')
+                    <span class="error-text">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-actions-row">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">PERBARUI AKUN TAKMIR</button>
+            </div>
+        </form>
+
+        <form action="{{ route('admin.masjid.takmir.destroy', $masjid->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun takmir ini?')" style="margin-top: 15px;">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-secondary" style="width: 100%; border-color: var(--danger); color: var(--danger);">HAPUS AKUN TAKMIR</button>
+        </form>
+    @else
+        <!-- If Takmir account doesn't exist, show register form -->
+        <form action="{{ route('admin.masjid.takmir.store', $masjid->id) }}" method="POST">
+            @csrf
+            <div class="form-group">
+                <label class="form-label" for="takmir_name">Nama Lengkap Takmir</label>
+                <input type="text" name="name" id="takmir_name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="Contoh: Ahmad Fathoni" required>
+                @error('name')
+                    <span class="error-text">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <label class="form-label" for="takmir_username">Username</label>
+                    <input type="text" name="username" id="takmir_username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}" placeholder="Contoh: takmir_annur" required>
+                    @error('username')
+                        <span class="error-text">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div>
+                    <label class="form-label" for="takmir_email">Email</label>
+                    <input type="email" name="email" id="takmir_email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Contoh: takmir@annur.or.id" required>
+                    @error('email')
+                        <span class="error-text">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="takmir_password">Password</label>
+                <input type="password" name="password" id="takmir_password" class="form-control @error('password') is-invalid @enderror" placeholder="Masukkan password minimal 8 karakter" required>
+                @error('password')
+                    <span class="error-text">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-actions-row">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">BUAT AKUN TAKMIR</button>
+            </div>
+        </form>
+    @endif
+</div>
+@endif
 @endsection

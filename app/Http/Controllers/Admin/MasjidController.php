@@ -13,7 +13,7 @@ class MasjidController extends Controller
         $search = $request->input('search');
         $kecamatan = $request->input('kecamatan');
 
-        $masjids = Masjid::when($search, function ($query, $search) {
+        $masjids = Masjid::with('user')->when($search, function ($query, $search) {
             return $query->where('nama', 'like', "%{$search}%")
                          ->orWhere('kode_masjid', 'like', "%{$search}%");
         })
@@ -56,6 +56,7 @@ class MasjidController extends Controller
 
     public function edit(Masjid $masjid)
     {
+        $masjid->load('user');
         return view('admin.masjid.form', [
             'masjid' => $masjid,
             'isEdit' => true,
@@ -83,7 +84,11 @@ class MasjidController extends Controller
 
     public function destroy(Masjid $masjid)
     {
+        $user = $masjid->user;
         $masjid->delete();
+        if ($user) {
+            $user->delete();
+        }
 
         return redirect()->route('admin.masjid.index')->with('success', 'Data Masjid berhasil dihapus.');
     }
@@ -152,5 +157,68 @@ class MasjidController extends Controller
         ->get();
 
         return view('admin.masjid.cetak', compact('masjids', 'search', 'kecamatan'));
+    }
+
+    public function updateOrCreateTakmir(Request $request, Masjid $masjid)
+    {
+        $user = $masjid->user;
+
+        if ($user) {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+                'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+                'password' => 'nullable|string|min:8',
+            ]);
+
+            $userData = [
+                'name' => $request->name,
+                'username' => $request->username,
+                'email' => $request->email,
+            ];
+
+            if ($request->password) {
+                $userData['password'] = bcrypt($request->password);
+            }
+
+            $user->update($userData);
+
+            return redirect()->route('admin.masjid.edit', $masjid->id)
+                ->with('success', 'Akun Takmir berhasil diperbarui.');
+        } else {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'username' => 'required|string|max:255|unique:users,username',
+                'email' => 'required|string|email|max:255|unique:users,email',
+                'password' => 'required|string|min:8',
+            ]);
+
+            $newUser = \App\Models\User::create([
+                'name' => $request->name,
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'role' => 'takmir',
+            ]);
+
+            $masjid->update([
+                'user_id' => $newUser->id,
+            ]);
+
+            return redirect()->route('admin.masjid.edit', $masjid->id)
+                ->with('success', 'Akun Takmir berhasil dibuat dan dikaitkan dengan masjid ini.');
+        }
+    }
+
+    public function destroyTakmir(Masjid $masjid)
+    {
+        $user = $masjid->user;
+        if ($user) {
+            $masjid->update(['user_id' => null]);
+            $user->delete();
+        }
+
+        return redirect()->route('admin.masjid.edit', $masjid->id)
+            ->with('success', 'Akun Takmir berhasil dihapus.');
     }
 }

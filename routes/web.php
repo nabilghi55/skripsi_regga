@@ -36,6 +36,8 @@ Route::middleware(['auth', 'role:pengurus'])->prefix('admin')->group(function ()
     // Masjid Extra Routes
     Route::get('masjid/export', [AdminMasjidController::class, 'export'])->name('admin.masjid.export');
     Route::get('masjid/cetak', [AdminMasjidController::class, 'cetak'])->name('admin.masjid.cetak');
+    Route::post('masjid/{masjid}/takmir', [AdminMasjidController::class, 'updateOrCreateTakmir'])->name('admin.masjid.takmir.store');
+    Route::delete('masjid/{masjid}/takmir', [AdminMasjidController::class, 'destroyTakmir'])->name('admin.masjid.takmir.destroy');
     Route::resource('masjid', AdminMasjidController::class)->names([
         'index' => 'admin.masjid.index',
         'create' => 'admin.masjid.create',
