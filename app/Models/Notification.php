@@ -11,6 +11,7 @@ class Notification extends Model
 
     protected $fillable = [
         'khatib_id',
+        'masjid_id',
         'jadwal_id',
         'pesan',
         'read_at',
@@ -23,6 +24,11 @@ class Notification extends Model
     public function khatib()
     {
         return $this->belongsTo(Khatib::class);
+    }
+
+    public function masjid()
+    {
+        return $this->belongsTo(Masjid::class);
     }
 
     public function jadwal()

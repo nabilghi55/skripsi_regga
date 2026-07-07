@@ -75,6 +75,11 @@ Route::middleware(['auth', 'role:pengurus'])->prefix('admin')->group(function ()
     
     Route::get('/notification', [AdminNotificationController::class, 'index'])->name('admin.notification.index');
     Route::post('/notification', [AdminNotificationController::class, 'store'])->name('admin.notification.store');
+    
+    // Riwayat Routes
+    Route::get('/riwayat-khatib', [\App\Http\Controllers\Admin\RiwayatController::class, 'riwayatKhotib'])->name('admin.riwayatKhotib');
+    Route::get('/riwayat-takmir', [\App\Http\Controllers\Admin\RiwayatController::class, 'riwayatTakmir'])->name('admin.riwayatTakmir');
+    Route::get('/riwayat-aktivitas', [\App\Http\Controllers\Admin\RiwayatController::class, 'riwayatAktivitas'])->name('admin.riwayatAktivitas');
 });
 
 // Khatib Routes

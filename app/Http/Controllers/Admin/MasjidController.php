@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Masjid;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class MasjidController extends Controller
@@ -51,6 +52,8 @@ class MasjidController extends Controller
 
         Masjid::create($request->all());
 
+        ActivityLog::log("Menambahkan Masjid baru: " . $request->nama);
+
         return redirect()->route('admin.masjid.index')->with('success', 'Data Masjid berhasil ditambahkan.');
     }
 
@@ -79,16 +82,21 @@ class MasjidController extends Controller
 
         $masjid->update($request->all());
 
+        ActivityLog::log("Mengubah data Masjid: " . $masjid->nama);
+
         return redirect()->route('admin.masjid.index')->with('success', 'Data Masjid berhasil diperbarui.');
     }
 
     public function destroy(Masjid $masjid)
     {
+        $masjidNama = $masjid->nama;
         $user = $masjid->user;
         $masjid->delete();
         if ($user) {
             $user->delete();
         }
+
+        ActivityLog::log("Menghapus Masjid: " . $masjidNama);
 
         return redirect()->route('admin.masjid.index')->with('success', 'Data Masjid berhasil dihapus.');
     }
@@ -183,6 +191,8 @@ class MasjidController extends Controller
 
             $user->update($userData);
 
+            ActivityLog::log("Memperbarui akun Takmir " . $request->name . " untuk Masjid " . $masjid->nama);
+
             return redirect()->route('admin.masjid.edit', $masjid->id)
                 ->with('success', 'Akun Takmir berhasil diperbarui.');
         } else {
@@ -205,6 +215,8 @@ class MasjidController extends Controller
                 'user_id' => $newUser->id,
             ]);
 
+            ActivityLog::log("Membuat akun Takmir " . $request->name . " untuk Masjid " . $masjid->nama);
+
             return redirect()->route('admin.masjid.edit', $masjid->id)
                 ->with('success', 'Akun Takmir berhasil dibuat dan dikaitkan dengan masjid ini.');
         }
@@ -217,6 +229,8 @@ class MasjidController extends Controller
             $masjid->update(['user_id' => null]);
             $user->delete();
         }
+
+        ActivityLog::log("Menghapus akun Takmir dari Masjid " . $masjid->nama);
 
         return redirect()->route('admin.masjid.edit', $masjid->id)
             ->with('success', 'Akun Takmir berhasil dihapus.');

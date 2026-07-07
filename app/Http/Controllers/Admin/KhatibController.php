@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Khatib;
 use App\Models\User;
 use App\Models\Jadwal;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -82,6 +83,8 @@ class KhatibController extends Controller
             'foto_profile' => $fotoPath,
         ]);
 
+        ActivityLog::log("Menambahkan Khatib baru: " . $request->nama);
+
         return redirect()->route('admin.khatib.index')->with([
             'success' => 'Data Khatib berhasil ditambahkan. Username login: ' . $username,
             'new_khatib' => [
@@ -154,16 +157,21 @@ class KhatibController extends Controller
             ]);
         }
 
+        ActivityLog::log("Mengubah data Khatib: " . $khatib->nama);
+
         return redirect()->route('admin.khatib.index')->with('success', 'Data Khatib berhasil diperbarui.');
     }
 
     public function destroy(Khatib $khatib)
     {
+        $khatibNama = $khatib->nama;
         if ($khatib->user) {
             $khatib->user->delete();
         } else {
             $khatib->delete();
         }
+
+        ActivityLog::log("Menghapus Khatib: " . $khatibNama);
 
         return redirect()->route('admin.khatib.index')->with('success', 'Data Khatib berhasil dihapus.');
     }

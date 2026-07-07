@@ -7,6 +7,7 @@ use App\Models\Jadwal;
 use App\Models\Khatib;
 use App\Models\Masjid;
 use App\Models\Notification;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -133,6 +134,8 @@ class JadwalController extends Controller
             'pesan' => $pesan,
         ]);
 
+        ActivityLog::log("Menambahkan Jadwal Khotbah baru untuk Khatib " . $jadwal->khatib->nama . " di " . $jadwal->masjid->nama . " pada tanggal " . $jadwal->tanggal->format('Y-m-d'));
+
         return redirect()->route('admin.jadwal.index')->with('success', 'Jadwal Khotbah berhasil ditambahkan dan notifikasi dikirim ke Khatib.');
     }
 
@@ -164,12 +167,17 @@ class JadwalController extends Controller
 
         $jadwal->update($request->all());
 
+        ActivityLog::log("Mengubah Jadwal Khotbah untuk Khatib " . $jadwal->khatib->nama . " di " . $jadwal->masjid->nama . " pada tanggal " . $jadwal->tanggal->format('Y-m-d'));
+
         return redirect()->route('admin.jadwal.index')->with('success', 'Jadwal Khotbah berhasil diperbarui.');
     }
 
     public function destroy(Jadwal $jadwal)
     {
+        $logMsg = "Menghapus Jadwal Khotbah untuk Khatib " . $jadwal->khatib->nama . " di " . $jadwal->masjid->nama . " pada tanggal " . $jadwal->tanggal->format('Y-m-d');
         $jadwal->delete();
+
+        ActivityLog::log($logMsg);
 
         return redirect()->route('admin.jadwal.index')->with('success', 'Jadwal Khotbah berhasil dihapus.');
     }
@@ -179,6 +187,8 @@ class JadwalController extends Controller
         $jadwal->update([
             'status' => 'Badal', // Mark it as Badal needed/empty
         ]);
+
+        ActivityLog::log("Menyetujui (ACC) pengajuan perubahan Jadwal Khotbah di " . $jadwal->masjid->nama . " pada tanggal " . $jadwal->tanggal->format('Y-m-d'));
 
         // Create Riwayat Badal entry
         \App\Models\RiwayatBadal::create([
@@ -269,11 +279,15 @@ class JadwalController extends Controller
         $khatib = Khatib::find($request->khatib_id);
         $formattedDate = Carbon::parse($request->tanggal)->translatedFormat('d F Y');
         
+        $pesan = "Anda ditugaskan menjadi Khatib Badal pada hari Jumat, {$formattedDate} di {$masjid->nama} pukul {$request->waktu_khutbah} WIB.";
+
         Notification::create([
             'khatib_id' => $request->khatib_id,
             'jadwal_id' => $jadwal->id,
-            'pesan' => "Anda ditugaskan menjadi Khatib Badal pada hari Jumat, {$formattedDate} di {$masjid->nama} pukul {$request->waktu_khutbah} WIB.",
+            'pesan' => $pesan,
         ]);
+
+        ActivityLog::log("Menambahkan Jadwal Badal baru untuk Khatib " . $khatib->nama . " di " . $masjid->nama . " pada tanggal " . $request->tanggal);
 
         // Construct WhatsApp message
         $cleanPhone = preg_replace('/[^0-9]/', '', $khatib->no_hp);

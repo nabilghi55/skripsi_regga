@@ -55,6 +55,24 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('admin.riwayatKhotib') }}" class="sidebar-item-link {{ Request::routeIs('admin.riwayatKhotib') ? 'active' : '' }}">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>Riwayat Khatib</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.riwayatTakmir') }}" class="sidebar-item-link {{ Request::routeIs('admin.riwayatTakmir') ? 'active' : '' }}">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-10 9h3v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8h3L12 3z"/></svg>
+                        <span>Riwayat Takmir</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.riwayatAktivitas') }}" class="sidebar-item-link {{ Request::routeIs('admin.riwayatAktivitas') ? 'active' : '' }}">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <span>Riwayat Aktivitas</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('admin.notification.index') }}" class="sidebar-item-link {{ Request::routeIs('admin.notification.*') ? 'active' : '' }}">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                         <span>Notifikasi</span>

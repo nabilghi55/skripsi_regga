@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\RiwayatBadal;
 use App\Models\Khatib;
 use App\Models\Jadwal;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -57,13 +58,18 @@ class RiwayatBadalController extends Controller
             }
         }
 
+        ActivityLog::log("Memperbarui status Riwayat Badal untuk Masjid " . $riwayat->masjid->nama . " menjadi status: " . $request->status);
+
         return redirect()->route('admin.riwayatBadal.index')->with('success', 'Riwayat Badal berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
         $riwayat = RiwayatBadal::findOrFail($id);
+        $masjidNama = $riwayat->masjid->nama;
         $riwayat->delete();
+
+        ActivityLog::log("Menghapus Riwayat Badal untuk Masjid " . $masjidNama);
 
         return redirect()->route('admin.riwayatBadal.index')->with('success', 'Riwayat Badal berhasil dihapus.');
     }

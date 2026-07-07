@@ -130,17 +130,19 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
-    background: radial-gradient(circle at 10% 20%, rgba(27, 82, 192, 0.05) 0%, rgba(255,255,255,1) 90%);
+    background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url('../images/bg-login.jpg') no-repeat center center / cover;
 }
 
 .auth-card {
-    background-color: var(--bg-card);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     width: 100%;
     max-width: 400px;
     padding: 40px 32px;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     text-align: center;
 }
 

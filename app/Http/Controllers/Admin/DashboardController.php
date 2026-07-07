@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Khatib;
 use App\Models\Masjid;
 use App\Models\Jadwal;
+use App\Models\RiwayatBadal;
+use App\Models\ActivityLog;
 use Carbon\Carbon;
-
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -52,6 +53,19 @@ class DashboardController extends Controller
         $allSchedules = $query->orderBy('tanggal', 'asc')->get();
         $jadwalTerdekat = $allSchedules->unique('masjid_id')->take(10);
 
+        // Fetch pending badals (unverified)
+        $pendingBadals = RiwayatBadal::with(['khatib', 'masjid', 'pengganti'])
+            ->where('status', 'Belum Terverifikasi')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        // Fetch recent activity logs
+        $recentActivities = ActivityLog::with('user')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
         // Tanggal Update (Bahasa Indonesia) - get the latest update from jadwals, khatibs, and masjids
         $lastJadwal = Jadwal::max('updated_at');
         $lastKhatib = Khatib::max('updated_at');
@@ -67,6 +81,8 @@ class DashboardController extends Controller
             'totalJadwal',
             'jadwalMingguIni',
             'jadwalTerdekat',
+            'pendingBadals',
+            'recentActivities',
             'search',
             'periode',
             'tanggalUpdate'
