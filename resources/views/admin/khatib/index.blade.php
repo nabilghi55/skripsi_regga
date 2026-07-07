@@ -87,37 +87,37 @@
                     <th style="width: 50px;">No</th>
                     <th>NBM</th>
                     <th>Nama Khatib</th>
-                    <th>Alamat (Privasi)</th>
-                    <th>No HP 1 (Privasi)</th>
-                    <th>No HP 2 (Privasi)</th>
+                    <th>Alamat</th>
+                    <th>No HP 1</th>
+                    <th>No HP 2</th>
                     <th>Tgl Lahir</th>
+                    <th>Pendidikan</th>
                     <th>Status</th>
                     <th style="width: 150px; text-align: center;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($khatibs as $index => $k)
-                    @php
-                        // Privacy masking logic
-                        $maskedAlamat = strlen($k->alamat) > 10 ? substr($k->alamat, 0, 8) . '***' : $k->alamat;
-                        $maskedNoHp1 = strlen($k->no_hp) > 6 ? substr($k->no_hp, 0, 4) . '****' . substr($k->no_hp, -3) : $k->no_hp;
-                        $maskedNoHp2 = $k->no_hp_2 
-                            ? (strlen($k->no_hp_2) > 6 ? substr($k->no_hp_2, 0, 4) . '****' . substr($k->no_hp_2, -3) : $k->no_hp_2)
-                            : '-';
-                    @endphp
                     <tr>
                         <td>{{ $khatibs->firstItem() + $index }}</td>
                         <td><code style="font-weight: bold; color: var(--text-dark);">{{ $k->nbm ?? '-' }}</code></td>
-                        <td style="font-weight: 700;">
+                        <td style="font-weight: 700; white-space: nowrap;">
+                            <!-- Image Avatar Preview -->
+                            @if($k->foto_profile)
+                                <img src="{{ asset('storage/' . $k->foto_profile) }}" class="table-profile-img" alt="Avatar">
+                            @else
+                                <div class="table-profile-img-placeholder">{{ substr($k->nama, 0, 2) }}</div>
+                            @endif
                             <!-- Link to Khatib detail page -->
                             <a href="{{ route('admin.khatib.show', $k->id) }}" style="color: var(--primary); text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
                                 {{ $k->nama }}
                             </a>
                         </td>
-                        <td><span title="{{ $k->alamat }}">{{ $maskedAlamat }}</span></td>
-                        <td><span>{{ $maskedNoHp1 }}</span></td>
-                        <td><span>{{ $maskedNoHp2 }}</span></td>
+                        <td>{{ $k->alamat }}</td>
+                        <td>{{ $k->no_hp }}</td>
+                        <td>{{ $k->no_hp_2 ?? '-' }}</td>
                         <td>{{ $k->tanggal_lahir ? $k->tanggal_lahir->translatedFormat('d M Y') : '-' }}</td>
+                        <td style="font-weight: 600;">{{ $k->jenjang_pendidikan ?? '-' }}</td>
                         <td>
                             <span class="badge {{ $k->status === 'Normal' ? 'badge-active' : ($k->status === 'Off' ? 'badge-inactive' : 'badge-warning') }}">
                                 {{ $k->status }}

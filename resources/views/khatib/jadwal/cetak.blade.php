@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Data Khatib - SIKJ CMM</title>
+    <title>Jadwal Khotbah Jumat - {{ $khatib->nama }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
@@ -180,17 +180,14 @@
 
     <div class="report-header">
         <h1>Korps Mubaligh Masjid (CMM)</h1>
-        <h2>Laporan Data Nama Khatib SIKJ</h2>
+        <h2>Jadwal Tugas Khutbah Jumat Khatib</h2>
         <p>Alamat: Jl. Candi No. 15, Dau, Malang | Email: info@cmm.or.id</p>
     </div>
 
     <div class="report-meta">
         <div>
-            @if($search)
-                <strong>Filter Pencarian:</strong> "{{ $search }}"
-            @else
-                <strong>Kategori:</strong> Semua Data Khatib
-            @endif
+            <strong>Nama Khatib:</strong> {{ $khatib->nama }}<br>
+            <strong>NBM:</strong> {{ $khatib->nbm ?? '-' }}
         </div>
         <div>
             <strong>Tanggal Cetak:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y H:i') }} WIB
@@ -200,38 +197,43 @@
     <table class="report-table">
         <thead>
             <tr>
-                <th style="width: 50px;">No</th>
-                <th>NBM</th>
-                <th>Nama Khatib</th>
-                <th>Alamat</th>
-                <th>No HP 1</th>
-                <th>No HP 2</th>
-                <th>Tanggal Lahir</th>
-                <th>Pendidikan</th>
-                <th style="width: 100px;">Status</th>
+                <th style="width: 50px; text-align: center;">No</th>
+                <th style="width: 180px;">Hari / Tanggal</th>
+                <th>Masjid Tujuan</th>
+                <th>Alamat Masjid</th>
+                <th style="width: 100px;">Waktu</th>
+                <th style="width: 120px; text-align: center;">Status</th>
             </tr>
         </thead>
         <tbody>
-            @forelse($khatibs as $index => $k)
+            @forelse($jadwals as $index => $j)
                 <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td style="font-weight: 700;">{{ $k->nbm ?? '-' }}</td>
-                    <td style="font-weight: 700;">{{ $k->nama }}</td>
-                    <td>{{ $k->alamat }}</td>
-                    <td>{{ $k->no_hp }}</td>
-                    <td>{{ $k->no_hp_2 ?? '-' }}</td>
-                    <td>{{ $k->tanggal_lahir ? $k->tanggal_lahir->translatedFormat('d F Y') : '-' }}</td>
-                    <td style="font-weight: 600;">{{ $k->jenjang_pendidikan ?? '-' }}</td>
-                    <td>
-                        <span class="badge {{ $k->status === 'Normal' ? 'badge-active' : ($k->status === 'Off' ? 'badge-inactive' : 'badge-warning') }}">
-                            {{ $k->status }}
+                    <td style="text-align: center; font-weight: bold;">{{ $index + 1 }}</td>
+                    <td style="font-weight: 600;">
+                        <div>{{ $j->tanggal->translatedFormat('l, d F Y') }}</div>
+                        <div style="font-size: 11px; color: #64748B; font-weight: 500; margin-top: 2px;">{{ $j->hijri_date }}</div>
+                    </td>
+                    <td style="font-weight: 700; color: #1B52C0;">{{ $j->masjid->nama }}</td>
+                    <td>{{ $j->masjid->alamat }}</td>
+                    <td>{{ \Carbon\Carbon::parse($j->waktu_khutbah)->format('H:i') }} WIB</td>
+                    <td style="text-align: center;">
+                        @php
+                            $badgeClass = 'badge-active';
+                            if (in_array(strtolower($j->status), ['izin', 'sakit', 'tidak hadir'])) {
+                                $badgeClass = 'badge-inactive';
+                            } elseif (strtolower($j->status) === 'perubahan diajukan') {
+                                $badgeClass = 'badge-warning';
+                            }
+                        @endphp
+                        <span class="badge {{ $badgeClass }}">
+                            {{ $j->status }}
                         </span>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" style="text-align: center; color: #64748B; padding: 20px;">
-                        Tidak ada data khatib.
+                    <td colspan="6" style="text-align: center; color: #64748B; padding: 30px;">
+                        Tidak ada data jadwal tugas khutbah.
                     </td>
                 </tr>
             @endforelse
@@ -241,15 +243,15 @@
     <div class="report-footer">
         <p>Malang, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
         <p>Mengetahui,</p>
-        <p><strong>Ketua Pengurus CMM</strong></p>
-        <div class="signature-area">
-            ( _____________________ )
+        <p><strong>Khatib yang bertugas,</strong></p>
+        <div class="signature-area" style="margin-top: 80px;">
+            ( {{ $khatib->nama }} )
         </div>
     </div>
 
     <!-- Floating Actions for Screen View -->
     <div class="print-actions no-print">
-        <a href="{{ route('admin.khatib.index') }}" class="btn btn-back">
+        <a href="{{ route('khatib.jadwalSaya') }}" class="btn btn-back">
             Kembali
         </a>
         <button onclick="window.print();" class="btn btn-print">
@@ -258,6 +260,7 @@
     </div>
 
     <script>
+        // Trigger print dialog automatically when loaded
         window.onload = function() {
             setTimeout(function() {
                 window.print();

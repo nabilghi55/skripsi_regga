@@ -48,9 +48,15 @@ class MasjidController extends Controller
             'no_hp_2' => 'nullable|string|max:20',
             'google_maps_link' => 'nullable|url',
             'kategori' => 'required|string|in:Masjid Muhammadiyah,Masjid Independen',
+            'foto_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        Masjid::create($request->all());
+        $data = $request->except('foto_profile');
+        if ($request->hasFile('foto_profile')) {
+            $data['foto_profile'] = $request->file('foto_profile')->store('profile_photos', 'public');
+        }
+
+        Masjid::create($data);
 
         ActivityLog::log("Menambahkan Masjid baru: " . $request->nama);
 
@@ -78,9 +84,15 @@ class MasjidController extends Controller
             'no_hp_2' => 'nullable|string|max:20',
             'google_maps_link' => 'nullable|url',
             'kategori' => 'required|string|in:Masjid Muhammadiyah,Masjid Independen',
+            'foto_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $masjid->update($request->all());
+        $data = $request->except('foto_profile');
+        if ($request->hasFile('foto_profile')) {
+            $data['foto_profile'] = $request->file('foto_profile')->store('profile_photos', 'public');
+        }
+
+        $masjid->update($data);
 
         ActivityLog::log("Mengubah data Masjid: " . $masjid->nama);
 

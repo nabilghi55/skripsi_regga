@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Takmir;
 use App\Http\Controllers\Controller;
 use App\Models\Jadwal;
 use App\Models\Masjid;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -52,7 +53,8 @@ class DashboardController extends Controller
         $search = $request->input('search');
         $periode = $request->input('periode'); // 1_minggu, 1_bulan, 4_bulan
 
-        $query = Jadwal::with(['khatib', 'masjid']);
+        $query = Jadwal::with(['khatib', 'masjid'])
+            ->where('tanggal', '>=', Carbon::today()->toDateString());
 
         if ($masjid) {
             $query->where('masjid_id', $masjid->id);
@@ -74,9 +76,34 @@ class DashboardController extends Controller
             $query->whereBetween('tanggal', [Carbon::today()->toDateString(), Carbon::today()->addDays(120)->toDateString()]);
         }
 
-        $jadwals = $query->orderBy('tanggal', 'desc')->paginate(5)->withQueryString();
+        $jadwals = $query->orderBy('tanggal', 'asc')->paginate(5)->withQueryString();
 
         return view('takmir.jadwal.index', compact('jadwals', 'search', 'periode', 'masjid'));
+    }
+
+    public function riwayat(Request $request)
+    {
+        $masjid = $this->getMasjid();
+        $search = $request->input('search');
+
+        $query = Jadwal::with(['khatib', 'masjid'])
+            ->where('tanggal', '<', Carbon::today()->toDateString());
+
+        if ($masjid) {
+            $query->where('masjid_id', $masjid->id);
+        } else {
+            $query->whereRaw('1=0');
+        }
+
+        if ($search) {
+            $query->whereHas('khatib', function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%");
+            });
+        }
+
+        $jadwals = $query->orderBy('tanggal', 'desc')->paginate(5)->withQueryString();
+
+        return view('takmir.jadwal.riwayat', compact('jadwals', 'search', 'masjid'));
     }
 
     public function cetakJadwal(Request $request)
@@ -180,5 +207,30 @@ class DashboardController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Catatan/saran berhasil disimpan.');
+    }
+
+    public function notifications()
+    {
+        $masjid = $this->getMasjid();
+        $notifications = null;
+        if ($masjid) {
+            $notifications = Notification::where('masjid_id', $masjid->id)
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+        }
+
+        return view('takmir.notification.index', compact('masjid', 'notifications'));
+    }
+
+    public function markNotifRead(Notification $notification)
+    {
+        $masjid = $this->getMasjid();
+        if (!$masjid || $notification->masjid_id !== $masjid->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $notification->update(['read_at' => Carbon::now()]);
+
+        return response()->json(['success' => true]);
     }
 }

@@ -17,6 +17,7 @@ class Khatib extends Model
         'no_hp_2',
         'tanggal_lahir',
         'alamat',
+        'jenjang_pendidikan',
         'status',
         'foto_profile',
     ];

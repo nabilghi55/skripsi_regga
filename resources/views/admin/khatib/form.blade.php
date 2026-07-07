@@ -80,6 +80,25 @@
         </div>
 
         <div class="form-group">
+            <label class="form-label" for="jenjang_pendidikan">Jenjang Pendidikan</label>
+            <select name="jenjang_pendidikan" id="jenjang_pendidikan" class="form-control @error('jenjang_pendidikan') is-invalid @enderror">
+                <option value="">Pilih Jenjang Pendidikan</option>
+                <option value="SMA / Sederajat" {{ old('jenjang_pendidikan', $khatib->jenjang_pendidikan) === 'SMA / Sederajat' ? 'selected' : '' }}>SMA / Sederajat</option>
+                <option value="D3" {{ old('jenjang_pendidikan', $khatib->jenjang_pendidikan) === 'D3' ? 'selected' : '' }}>D3</option>
+                <option value="S1" {{ old('jenjang_pendidikan', $khatib->jenjang_pendidikan) === 'S1' ? 'selected' : '' }}>S1</option>
+                <option value="S2" {{ old('jenjang_pendidikan', $khatib->jenjang_pendidikan) === 'S2' ? 'selected' : '' }}>S2</option>
+                <option value="S3" {{ old('jenjang_pendidikan', $khatib->jenjang_pendidikan) === 'S3' ? 'selected' : '' }}>S3</option>
+                <option value="Lc" {{ old('jenjang_pendidikan', $khatib->jenjang_pendidikan) === 'Lc' ? 'selected' : '' }}>Lc</option>
+                <option value="MA" {{ old('jenjang_pendidikan', $khatib->jenjang_pendidikan) === 'MA' ? 'selected' : '' }}>MA</option>
+                <option value="Dr." {{ old('jenjang_pendidikan', $khatib->jenjang_pendidikan) === 'Dr.' ? 'selected' : '' }}>Dr.</option>
+                <option value="Prof." {{ old('jenjang_pendidikan', $khatib->jenjang_pendidikan) === 'Prof.' ? 'selected' : '' }}>Prof.</option>
+            </select>
+            @error('jenjang_pendidikan')
+                <span class="error-text">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
             <label class="form-label" for="alamat">Alamat</label>
             <textarea name="alamat" id="alamat" rows="4" class="form-control @error('alamat') is-invalid @enderror" placeholder="Masukkan alamat lengkap" required>{{ old('alamat', $khatib->alamat) }}</textarea>
             @error('alamat')

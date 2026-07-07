@@ -54,9 +54,9 @@
                     <th style="width: 50px;">No</th>
                     <th>Kode Masjid</th>
                     <th>Nama Masjid</th>
-                    <th>Alamat (Privasi)</th>
-                    <th>No HP 1 (Privasi)</th>
-                    <th>No HP 2 (Privasi)</th>
+                    <th>Alamat</th>
+                    <th>No HP 1</th>
+                    <th>No HP 2</th>
                     <th>Kecamatan</th>
                     <th>Akun Takmir</th>
                     <th>Kategori</th>
@@ -65,27 +65,23 @@
             </thead>
             <tbody>
                 @forelse($masjids as $index => $m)
-                    @php
-                        // Privacy masking logic
-                        $maskedAlamat = strlen($m->alamat) > 10 ? substr($m->alamat, 0, 8) . '***' : $m->alamat;
-                        $maskedNoHp1 = $m->no_hp_1 
-                            ? (strlen($m->no_hp_1) > 6 ? substr($m->no_hp_1, 0, 4) . '****' . substr($m->no_hp_1, -3) : $m->no_hp_1)
-                            : '-';
-                        $maskedNoHp2 = $m->no_hp_2 
-                            ? (strlen($m->no_hp_2) > 6 ? substr($m->no_hp_2, 0, 4) . '****' . substr($m->no_hp_2, -3) : $m->no_hp_2)
-                            : '-';
-                    @endphp
                     <tr>
                         <td>{{ $masjids->firstItem() + $index }}</td>
                         <td><code style="font-weight: bold; color: var(--text-dark);">{{ $m->kode_masjid ?? '-' }}</code></td>
-                        <td style="font-weight: 700;">
+                        <td style="font-weight: 700; white-space: nowrap;">
+                            <!-- Image Avatar Preview -->
+                            @if($m->foto_profile)
+                                <img src="{{ asset('storage/' . $m->foto_profile) }}" class="table-profile-img" alt="Masjid">
+                            @else
+                                <div class="table-profile-img-placeholder">{{ substr($m->nama, 0, 2) }}</div>
+                            @endif
                             <a href="{{ route('admin.masjid.edit', $m->id) }}" style="color: var(--primary); text-decoration: none; font-weight: 700;">
                                 {{ $m->nama }}
                             </a>
                         </td>
-                        <td><span title="{{ $m->alamat }}">{{ $maskedAlamat }}</span></td>
-                        <td>{{ $maskedNoHp1 }}</td>
-                        <td>{{ $maskedNoHp2 }}</td>
+                        <td>{{ $m->alamat }}</td>
+                        <td>{{ $m->no_hp_1 ?? '-' }}</td>
+                        <td>{{ $m->no_hp_2 ?? '-' }}</td>
                         <td>{{ $m->kecamatan }}</td>
                         <td>
                             @if($m->user)

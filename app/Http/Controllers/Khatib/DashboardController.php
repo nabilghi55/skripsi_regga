@@ -40,10 +40,23 @@ class DashboardController extends Controller
         $khatib = $this->getKhatib();
         $jadwals = Jadwal::with(['masjid'])
             ->where('khatib_id', $khatib->id)
-            ->orderBy('tanggal', 'desc')
+            ->where('tanggal', '>=', Carbon::today()->toDateString())
+            ->orderBy('tanggal', 'asc')
             ->get();
 
         return view('khatib.jadwal.index', compact('jadwals'));
+    }
+
+    public function riwayat()
+    {
+        $khatib = $this->getKhatib();
+        $jadwals = Jadwal::with(['masjid'])
+            ->where('khatib_id', $khatib->id)
+            ->where('tanggal', '<', Carbon::today()->toDateString())
+            ->orderBy('tanggal', 'desc')
+            ->get();
+
+        return view('khatib.jadwal.riwayat', compact('jadwals'));
     }
 
     public function detailJadwal(Jadwal $jadwal)
@@ -158,5 +171,26 @@ class DashboardController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Password Anda berhasil diubah.');
+    }
+
+    public function cetakJadwal(Request $request)
+    {
+        $khatib = $this->getKhatib();
+        $jadwals = Jadwal::with(['masjid'])
+            ->where('khatib_id', $khatib->id)
+            ->orderBy('tanggal', 'asc')
+            ->get();
+
+        return view('khatib.jadwal.cetak', compact('jadwals', 'khatib'));
+    }
+
+    public function notifications()
+    {
+        $khatib = $this->getKhatib();
+        $notifications = Notification::where('khatib_id', $khatib->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('khatib.notification.index', compact('khatib', 'notifications'));
     }
 }

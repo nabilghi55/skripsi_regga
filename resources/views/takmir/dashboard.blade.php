@@ -3,19 +3,46 @@
 @section('title', 'Beranda Takmir')
 
 @section('content')
+<!-- Header Greeting -->
 <div class="mobile-header" style="margin-bottom: 30px;">
     <div class="mobile-user-greeting">
         <span class="mobile-user-title">Halo Takmir,</span>
         <span class="mobile-user-name" style="text-transform: uppercase;">{{ $masjid ? $masjid->nama : 'Masjid' }}</span>
     </div>
-    <div class="mobile-header-actions">
-        <div class="mobile-avatar">
+    <div class="mobile-header-actions" style="display: flex; align-items: center; gap: 12px;">
+        @php
+            $unreadNotifCount = 0;
+            if ($masjid) {
+                $unreadNotifCount = \App\Models\Notification::where('masjid_id', $masjid->id)->whereNull('read_at')->count();
+            }
+        @endphp
+        <div class="mobile-action-btn" id="notif-bell" style="cursor: pointer; position: relative;" onclick="window.location='{{ route('takmir.notification.index') }}'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            @if($unreadNotifCount > 0)
+                <span class="mobile-notification-dot" style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background-color: var(--danger); border-radius: 50%;"></span>
+            @endif
+        </div>
+        <div class="mobile-avatar" style="cursor: pointer;" onclick="window.location='{{ route('takmir.profile') }}'">
             @if($masjid && $masjid->foto_profile)
                 <img src="{{ asset('storage/' . $masjid->foto_profile) }}" alt="Foto Masjid" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary);">
             @else
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
             @endif
         </div>
+    </div>
+</div>
+
+<!-- Hero Banner Utama -->
+<div class="dashboard-hero-banner" style="margin-top: 10px; margin-bottom: 25px;">
+    <div class="hero-banner-content">
+        <h2 class="hero-banner-title">Selamat Datang Takmir Masjid</h2>
+        <p class="hero-banner-subtitle">Portal SIKJ CMM. Kelola kesiapan sarana ibadah Salat Jumat di masjid Anda, berikan masukan/saran bagi Khatib bertugas, serta pantau jadwal khotbah dengan mudah.</p>
+    </div>
+    <div class="hero-banner-icon">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
     </div>
 </div>
 

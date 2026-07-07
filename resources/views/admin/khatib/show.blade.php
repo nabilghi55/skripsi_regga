@@ -40,6 +40,10 @@
                 <span style="font-weight: 600; color: var(--text-dark);">{{ $khatib->tanggal_lahir ? $khatib->tanggal_lahir->translatedFormat('d F Y') : '-' }}</span>
             </div>
             <div>
+                <strong style="color: var(--text-muted); display: block; font-size: 11px; text-transform: uppercase;">Jenjang Pendidikan</strong>
+                <span style="font-weight: 600; color: var(--text-dark);">{{ $khatib->jenjang_pendidikan ?? '-' }}</span>
+            </div>
+            <div>
                 <strong style="color: var(--text-muted); display: block; font-size: 11px; text-transform: uppercase;">Alamat Lengkap</strong>
                 <span style="font-weight: 600; color: var(--text-dark);">{{ $khatib->alamat }}</span>
             </div>

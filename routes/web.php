@@ -86,9 +86,12 @@ Route::middleware(['auth', 'role:pengurus'])->prefix('admin')->group(function ()
 Route::middleware(['auth', 'role:khatib'])->prefix('khatib')->group(function () {
     Route::get('/dashboard', [KhatibDashboardController::class, 'index'])->name('khatib.dashboard');
     Route::get('/jadwal', [KhatibDashboardController::class, 'jadwalSaya'])->name('khatib.jadwalSaya');
+    Route::get('/jadwal/cetak', [KhatibDashboardController::class, 'cetakJadwal'])->name('khatib.jadwal.cetak');
+    Route::get('/riwayat', [KhatibDashboardController::class, 'riwayat'])->name('khatib.riwayat');
     Route::get('/jadwal/{jadwal}', [KhatibDashboardController::class, 'detailJadwal'])->name('khatib.detailJadwal');
     Route::get('/jadwal/{jadwal}/perubahan', [KhatibDashboardController::class, 'formPerubahan'])->name('khatib.formPerubahan');
     Route::post('/jadwal/{jadwal}/perubahan', [KhatibDashboardController::class, 'kirimPerubahan'])->name('khatib.kirimPerubahan');
+    Route::get('/notification', [KhatibDashboardController::class, 'notifications'])->name('khatib.notification.index');
     Route::post('/notification/{notification}/read', [KhatibDashboardController::class, 'markNotifRead'])->name('khatib.markNotifRead');
     
     // Profile Routes
@@ -103,7 +106,10 @@ Route::middleware(['auth', 'role:takmir'])->prefix('takmir')->group(function () 
     Route::get('/jadwal', [\App\Http\Controllers\Takmir\DashboardController::class, 'jadwalMasjid'])->name('takmir.jadwal');
     Route::post('/jadwal/{jadwal}/saran', [\App\Http\Controllers\Takmir\DashboardController::class, 'updateSaran'])->name('takmir.jadwal.saran');
     Route::get('/jadwal/cetak', [\App\Http\Controllers\Takmir\DashboardController::class, 'cetakJadwal'])->name('takmir.jadwal.cetak');
+    Route::get('/riwayat', [\App\Http\Controllers\Takmir\DashboardController::class, 'riwayat'])->name('takmir.riwayat');
     Route::get('/profile', [\App\Http\Controllers\Takmir\DashboardController::class, 'profile'])->name('takmir.profile');
+    Route::get('/notification', [\App\Http\Controllers\Takmir\DashboardController::class, 'notifications'])->name('takmir.notification.index');
+    Route::post('/notification/{notification}/read', [\App\Http\Controllers\Takmir\DashboardController::class, 'markNotifRead'])->name('takmir.markNotifRead');
     Route::post('/profile', [\App\Http\Controllers\Takmir\DashboardController::class, 'updateProfile'])->name('takmir.profile.update');
     Route::post('/profile/password', [\App\Http\Controllers\Takmir\DashboardController::class, 'changePassword'])->name('takmir.profile.password');
 });

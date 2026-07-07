@@ -4,6 +4,20 @@
 @section('page_header', 'Dashboard')
 
 @section('content')
+<!-- Hero Banner Utama -->
+<div class="dashboard-hero-banner">
+    <div class="hero-banner-content">
+        <h2 class="hero-banner-title">Selamat Datang di Portal Admin SIKJ CMM</h2>
+        <p class="hero-banner-subtitle">Sistem Informasi Kesiapan Jadwal (SIKJ) Korps Mubaligh Masjid (CMM). Kelola jadwal khotbah Jumat, data masjid binaan, dan kesiapan ustad khatib secara mudah dan terintegrasi.</p>
+    </div>
+    <div class="hero-banner-icon">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+    </div>
+</div>
+
 <!-- Last Updated Timestamp -->
 <div style="background-color: var(--primary-light); color: var(--primary); padding: 12px 20px; border-radius: var(--radius-md); font-weight: 700; font-size: 13px; margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>

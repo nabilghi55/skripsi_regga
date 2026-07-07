@@ -12,11 +12,31 @@
     </a>
 
     <!-- Form -->
-    <form action="{{ $isEdit ? route('admin.masjid.update', $masjid->id) : route('admin.masjid.store') }}" method="POST">
+    <form action="{{ $isEdit ? route('admin.masjid.update', $masjid->id) : route('admin.masjid.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @if($isEdit)
             @method('PUT')
         @endif
+
+        <div class="form-group" style="text-align: center; margin-bottom: 25px;">
+            <label class="form-label" style="display: block; text-align: center;">Foto Masjid</label>
+            <div class="profile-avatar-container" style="margin-bottom: 12px;">
+                <div class="profile-avatar-wrapper" style="margin: 0 auto 12px;">
+                    @if($masjid->foto_profile)
+                        <img src="{{ asset('storage/' . $masjid->foto_profile) }}" id="preview-image" class="profile-avatar-image" alt="Preview Foto">
+                    @else
+                        <div id="avatar-placeholder" class="profile-avatar-placeholder">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                        </div>
+                        <img src="" id="preview-image" class="profile-avatar-image" style="display: none;" alt="Preview Foto">
+                    @endif
+                </div>
+            </div>
+            <input type="file" name="foto_profile" id="foto_profile" class="form-control" accept="image/*" onchange="previewFile()" style="max-width: 300px; margin: 0 auto;">
+            @error('foto_profile')
+                <span class="error-text" style="display: block; text-align: center;">{{ $message }}</span>
+            @enderror
+        </div>
 
         <div class="form-group">
             <label class="form-label" for="kode_masjid">Kode Masjid</label>
@@ -197,4 +217,27 @@
     @endif
 </div>
 @endif
+@endsection
+
+@section('scripts')
+<script>
+function previewFile() {
+    const preview = document.getElementById('preview-image');
+    const file = document.getElementById('foto_profile').files[0];
+    const placeholder = document.getElementById('avatar-placeholder');
+    const reader = new FileReader();
+
+    reader.addEventListener("load", function () {
+        preview.src = reader.result;
+        preview.style.display = "block";
+        if (placeholder) {
+            placeholder.style.display = "none";
+        }
+    }, false);
+
+    if (file) {
+        reader.readAsDataURL(file);
+    }
+}
+</script>
 @endsection

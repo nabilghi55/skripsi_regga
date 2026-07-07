@@ -42,6 +42,7 @@ class KhatibController extends Controller
             'tanggal_lahir' => 'nullable|date',
             'alamat' => 'required|string',
             'status' => 'required|in:Normal,Udzur / Sakit,Off,Tugas / Izin',
+            'jenjang_pendidikan' => 'nullable|string|max:255',
             'foto_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -79,6 +80,7 @@ class KhatibController extends Controller
             'no_hp_2' => $request->no_hp_2,
             'tanggal_lahir' => $request->tanggal_lahir,
             'alamat' => $request->alamat,
+            'jenjang_pendidikan' => $request->jenjang_pendidikan,
             'status' => $request->status,
             'foto_profile' => $fotoPath,
         ]);
@@ -132,6 +134,7 @@ class KhatibController extends Controller
             'tanggal_lahir' => 'nullable|date',
             'alamat' => 'required|string',
             'status' => 'required|in:Normal,Udzur / Sakit,Off,Tugas / Izin',
+            'jenjang_pendidikan' => 'nullable|string|max:255',
             'foto_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -142,6 +145,7 @@ class KhatibController extends Controller
             'no_hp_2' => $request->no_hp_2,
             'tanggal_lahir' => $request->tanggal_lahir,
             'alamat' => $request->alamat,
+            'jenjang_pendidikan' => $request->jenjang_pendidikan,
             'status' => $request->status,
         ];
 
@@ -194,7 +198,7 @@ class KhatibController extends Controller
             "Expires" => "0"
         ];
 
-        $columns = ['No', 'NBM', 'Nama Khatib', 'Alamat', 'No HP 1', 'No HP 2', 'Tanggal Lahir', 'Status'];
+        $columns = ['No', 'NBM', 'Nama Khatib', 'Alamat', 'No HP 1', 'No HP 2', 'Tanggal Lahir', 'Pendidikan', 'Status'];
 
         $callback = function() use($khatibs, $columns) {
             $file = fopen('php://output', 'w');
@@ -209,6 +213,7 @@ class KhatibController extends Controller
                     $k->no_hp,
                     $k->no_hp_2 ?? '-',
                     $k->tanggal_lahir ? $k->tanggal_lahir->format('Y-m-d') : '-',
+                    $k->jenjang_pendidikan ?? '-',
                     $k->status
                 ]);
             }

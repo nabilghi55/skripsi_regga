@@ -10,15 +10,32 @@
         <span class="mobile-user-name">{{ $khatib->nama }}</span>
     </div>
     <div class="mobile-header-actions">
-        <div class="mobile-action-btn" id="notif-bell">
+        <div class="mobile-action-btn" id="notif-bell" style="cursor: pointer;" onclick="window.location='{{ route('khatib.notification.index') }}'">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             @if($unreadNotification)
                 <span class="mobile-notification-dot"></span>
             @endif
         </div>
-        <div class="mobile-avatar">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+        <div class="mobile-avatar" style="cursor: pointer;" onclick="window.location='{{ route('khatib.profile') }}'">
+            @if($khatib->foto_profile)
+                <img src="{{ asset('storage/' . $khatib->foto_profile) }}" alt="Foto Profil" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary);">
+            @else
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+            @endif
         </div>
+    </div>
+</div>
+
+<!-- Hero Banner Utama -->
+<div class="dashboard-hero-banner" style="margin-top: 10px;">
+    <div class="hero-banner-content">
+        <h2 class="hero-banner-title">Selamat Datang, Ustadz!</h2>
+        <p class="hero-banner-subtitle">Portal Informasi Jadwal Khatib Jumat (SIKJ) CMM. Melalui portal ini, Anda dapat memantau jadwal penugasan khotbah, mengunduh jadwal cetak, dan mengonfirmasi kesediaan tugas khutbah Jumat Anda.</p>
+    </div>
+    <div class="hero-banner-icon">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
     </div>
 </div>
 
